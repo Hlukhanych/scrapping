@@ -8,6 +8,7 @@ import scrapy
 class FacultyItem(scrapy.Item):
     name = scrapy.Field()
     url = scrapy.Field()
+    image_urls = scrapy.Field()
 
 class ProgramItem(scrapy.Item):
     name = scrapy.Field()

@@ -7,6 +7,11 @@
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 
+class NamePipeline:
+    def process_item(self, item, spider):
+        if item['name'] == '':
+            item['name'] = "Невідома назва"
+        return item
 
 class Lab2Pipeline:
     def process_item(self, item, spider):

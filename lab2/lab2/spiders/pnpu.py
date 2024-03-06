@@ -9,48 +9,56 @@ class PnpuSpider(scrapy.Spider):
     start_urls = ["https://pnpu.edu.ua/faculties"]
 
     def parse(self, response):
-        soup = BeautifulSoup(response.body, "html.parser")
+        try:
+            soup = BeautifulSoup(response.body, "html.parser")
 
-        fac_list = soup.find(class_="entry themeform")
+            fac_list = soup.find(class_="entry themeform")
 
-        for item in fac_list.find_all(class_="wp-block-columns"):
-            a = item.find("a")
-            fac_name = a.find(string=True, recursive=False)
-            fac_url = a.get('href')
-            if fac_name == None:
-                fac_name = response.url.split("/")[1]
+            for item in fac_list.find_all(class_="wp-block-columns"):
+                a = item.find("a")
+                img = item.find("img")
+                fac_name = a.find(string=True, recursive=False)
+                fac_url = a.get('href')
+                img_url = img.get("src")
+                if fac_name == None:
+                    fac_name = response.url.split("/")[1]
 
-            yield FacultyItem(
-                name=fac_name,
-                url=fac_url
-            )
+                yield FacultyItem(
+                    name=fac_name,
+                    url=fac_url,
+                    image_urls=[img_url]
+                )
 
-            yield scrapy.Request(
-                url=fac_url,
+                yield scrapy.Request(
+                    url=fac_url,
 
-                callback=self.parse_faculty,
+                    callback=self.parse_faculty,
 
-                meta={
-                    "faculty": fac_name
-                }
-            )
+                    meta={
+                        "faculty": fac_name
+                    }
+                )
+        except:
+            ...
 
     def parse_faculty(self, response):
-        soup = BeautifulSoup(response.body, "html.parser")
+        try:
+            soup = BeautifulSoup(response.body, "html.parser")
 
-        prog_list = soup.find(class_="wpsm_panel-body")
+            prog_list = soup.find(class_="wpsm_panel-body")
 
-        for item in prog_list.find_all("a"):
-            a = item
-            prog_name = a.find(string=True, recursive=False)
-            prog_url = a.get('href')
+            for item in prog_list.find_all("a"):
+                a = item
+                prog_name = a.find(string=True, recursive=False)
+                prog_url = a.get('href')
 
-            yield ProgramItem(
-                name=prog_name,
-                url=prog_url,
-                faculty=response.meta.get("faculty")
-            )
-
+                yield ProgramItem(
+                    name=prog_name,
+                    url=prog_url,
+                    faculty=response.meta.get("faculty")
+                )
+        except:
+            ...
             # yield scrapy.Request(
             #     url=prog_url,
             #
