@@ -63,8 +63,9 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
+    "scrapy.pipelines.images.ImagesPipeline": 100,
     "lab2.pipelines.NamePipeline": 300,
-    "scrapy.pipelines.images.ImagesPipeline": 100
+    "lab2.pipelines.MySqlPipeline": 400
 }
 IMAGES_STORE = './img'
 IMAGES_EXPIRES = 0
